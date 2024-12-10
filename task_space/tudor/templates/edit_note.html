@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Edit note</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Here you can edit your note</p>
+        </div>
+    </div>
+</header>
+
+
+<div class="container mb-3 mt-5">
+    <div class="col-md-6 offset-md-3">
+      <div class="row">
+        <div class="card border-primary mb-3 text-center" style="max-width: 60rem;">
+
+          <div class="container mt-3">
+
+          <form method="POST" name="note_form">
+            {% csrf_token %}
+            {{ note_form.as_p }}
+
+              <div class="text-start mb-2">
+              <label for="characters">Characters: </label>
+              <span id="characters">{{ note.body|length}}</span>
+              for {{ note_max_characters }}
+              </div>
+
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+          </form>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<script>
+
+// character counter
+function countText() {
+  document.getElementById('characters').innerText = 0;
+  let text = document.note_form.text.value;
+  document.getElementById('characters').innerText = text.length;
+}
+
+
+</script>
+{% endblock %}

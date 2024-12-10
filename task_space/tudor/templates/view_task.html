@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+  {% if task.is_done == False %}
+
+  <div class="container mt-5">
+    <div class="col-md-6 offset-md-3">
+      <div class="row">
+        <div class="card border-primary mb-3 text-center" style="max-width: 60rem;">
+          <div class="card-header bg-transparent ">{{ task.date }}</div>
+          <div class="col mt-2 d-grid gap-2 d-md-flex justify-content-md-end">
+            <a class="btn btn-success mt-auto" href="{% url 'finish_task' task.id %}">Done</a>
+            <a class="btn btn-primary mt-auto" href="{% url 'edit_task' task.id %}">Edit</a>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            Delete
+            </button>
+
+          </div>
+          {% if task.image %}
+          <img src="{{ task.image.url }}" class="card-img-top" alt="">
+          {% endif %}
+          <div class="card-body">
+            <h3 class="card-header bg-transparent">{{ task.title }}</h3>
+            <p class="card-text">{{ task.description }}</p>
+          </div>
+          <!-- Checkbox list -->
+          <div class="card-header bg-transparent" ><h3>To-do list</h3></div>
+          <div class="text-start mt-3">
+
+          <table class="table table-striped table-hover table-sm align-middle">
+          {% if list_items %}
+            {% for item in list_items %}
+
+              <tr>
+                <td style="height: 2px">
+                <input class="form-check-input me-1 check-box" type="checkbox" {{ item.item_done|yesno:"checked," }} value="{{ item.id }}"
+                  id="{{ item.id }}">
+                {{ item.title }}
+                </td>
+                <td class="text-end">
+                 <a class="text-end" href="{% url 'delete_item' task.id item.id %}"><i class="bi bi-x-octagon"></i></a>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <p class="text-center">the task list is empty</p>
+          {% endif %}
+          </table>
+          </div>
+
+          <!-- form for adding objects to the list -->
+          <div class="mt-2">
+
+
+              <form method="POST" name="form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="text-start mb-2">
+                  <label for="characters">Characters: </label>
+                  <span id="itemCharacters">0</span>
+                  for {{ todo_max_char }}
+                </div>
+                <button type="submit" class="btn btn-primary">Add new item</button>
+              </form>
+
+          </div>
+          <!-- notes -->
+          <div class="card-header bg-transparent mt-3">
+          <h3>Notes</h3>
+            {% if notes %}
+              {% for note in notes %}
+                <div class="card">
+                  <div class="card-header">
+                      {{ note.created_at }}
+                  </div>
+                  <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                      <p>{{ note.body }}</p>
+                    </blockquote>
+                  </div>
+                    <div class="card-footer text-muted">
+                      <div class="text-end">
+                        <a class="text-end" href="{% url 'delete_note' note.id task.id %}"><i class="bi bi-trash"></i></a>
+                        <a class="text-end" href="{% url 'edit_note' task.id note.id %}"><i class="bi bi-pencil"></i></a>
+                      </div>
+                    </div>
+                </div><br/>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+          <!-- form for adding notes -->
+          <div class="mb-3 mt-3">
+            <form method="POST" name="note_form">
+
+              {% csrf_token %}
+              {{ note_form.as_p }}
+
+              <div class="text-start mb-2">
+              <label for="characters">Characters: </label>
+              <span id="characters">0</span>
+              for {{ note_max_characters }}
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+
+          <!-- modal for delete dialogue -->
+          <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Delete task</h5>
+                </div>
+                <div class="modal-body">
+                  <h3> Do you want to delete this task ?</h3>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                  <a class="btn btn-danger mt-auto" href="{% url 'delete_task' task.id %}">Yes, delete</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {% else %}
+
+
+  <div class="container mt-5">
+    <div class="col-md-6 offset-md-3">
+      <div class="row">
+        <div class="card border-primary mb-3 text-center" style="max-width: 60rem;">
+          <div class="card-header bg-transparent ">{{ task.date }}</div>
+          <div class="col mt-2 d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            Return
+            </button>
+
+          </div>
+          {% if task.image %}
+          <img src="{{ task.image.url }}" class="card-img-top" alt="">
+          {% endif %}
+          <div class="card-body">
+            <h3 class="card-header bg-transparent">{{ task.title }}</h3>
+            <p class="card-text">{{ task.description }}</p>
+          </div>
+          <!-- Checkbox list -->
+          <div class="card-header bg-transparent" ><h3>To-do list</h3></div>
+          <div class="text-start mt-3">
+          <table class="table table-striped table-hover table-sm align-middle">
+          {% if list_items %}
+            {% for item in list_items %}
+
+              <tr>
+                <td style="height: 2px">
+                <input class="form-check-input me-1 check-box" type="checkbox" {{ item.item_done|yesno:"checked," }} value="{{ item.id }}"
+                  id="{{ item.id }}">
+                {{ item.title }}
+              </tr>
+            {% endfor %}
+          {% else %}
+            <p class="text-center">the task list is empty</p>
+          {% endif %}
+          </table>
+          </div>
+
+          <!-- notes -->
+          <div class="card-header bg-transparent mt-3">
+          <h3>Notes</h3>
+            {% if notes %}
+              {% for note in notes %}
+                <div class="card">
+                  <div class="card-header">
+                      {{ note.created_at }}
+                  </div>
+                  <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                      <p>{{ note.body }}</p>
+                    </blockquote>
+                  </div>
+                    <div class="card-footer text-muted">
+
+                    </div>
+                </div><br/>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+
+          <!-- modal for return dialogue -->
+          <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Delete task</h5>
+                </div>
+                <div class="modal-body">
+                  <h3> Do you want to return this task to work space ?</h3>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                  <a class="btn btn-danger mt-auto" href="{% url 'return_task' task.id %}">Yes, return</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {% endif %}
+
+<script>
+// Check if checkbox pressed
+
+
+// check boxes
+$('.check-box').on('click', function(e){
+  e.preventDefault();
+  $.ajax({
+    type: 'POST',
+    url: '{% url 'check_boxes' %}',
+    data: {
+      item_id: $(this).val(),
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+      action: 'post'
+    },
+
+    success: function(json){
+      console.log(json)
+
+      let itemId
+      itemId = json.item_id
+      let checkBox
+      checkBox = document.getElementById(itemId)
+
+      if (checkBox.checked === true){
+      checkBox.checked = false;
+        } else {
+      checkBox.checked = true;
+        };
+    },
+
+    error: function(xhr, errmsg, err){
+
+    }
+  });
+});
+
+// character counter for notes
+function countText() {
+  document.getElementById('characters').innerText = 0;
+  let text = document.note_form.text.value;
+  console.log(text)
+  document.getElementById('characters').innerText = text.length;
+};
+
+function countItemText() {
+  document.getElementById('itemCharacters').innerText = 0;
+  let itemText = document.form.text.value;
+  console.log(itemText)
+  document.getElementById('itemCharacters').innerText = itemText.length;
+}
+
+
+
+
+</script>
+
+{% endblock %}

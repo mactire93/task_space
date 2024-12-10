@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Add new task</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Here you can add a new task</p>
+        </div>
+    </div>
+</header>
+
+<div class="container mt-5">
+    <div class="col-md-6 offset-md-3">
+      <div class="row">
+        <div class="card border-primary mb-3 text-center" style="max-width: 60rem;">
+
+          <div class="container">
+                <br/>
+                <form method="POST" name="task_form">
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                    <div class="text-start mb-2">
+                      <label for="titleChar">Title characters: </label>
+                      <span id="titleChar">0</span>
+                      for {{ title_max_char }}
+                    </div>
+                    <div class="text-start mb-2">
+                      <label for="characters">Description characters: </label>
+                      <span id="characters">0</span>
+                      for {{ task_max_char }}
+                    </div>
+                  <button type="submit" class="btn btn-primary mb-3">Add task</button>
+
+                </form>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+// character counter
+function countText() {
+  let text = document.task_form.text.value;
+  document.getElementById('characters').innerText = text.length;
+}
+// title character counter
+function countTitleText() {
+  let titleText = document.task_form.titleText.value;
+  document.getElementById('titleChar').innerText = titleText.length;
+}
+
+</script>
+
+
+{% endblock %}

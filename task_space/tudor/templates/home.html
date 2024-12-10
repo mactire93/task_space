@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Tudor Task Space</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">Have undone tasks? Cut all of them!</p>
+                </div>
+            </div>
+        </header>
+        <!-- Section-->
+        <section class="py-5">
+
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+                    <div class="col mb-5">
+                        <div class="card text-bg-info mb-3"
+                             style="max-width: 15rem; max-height: 15rem;">
+                            <a class="btn btn-info mt-auto" href="{% url 'add_task' %}">
+                                <!-- Date -->
+                                <div>Add a new task</div>
+                                <hr>
+                                <div class="card-body">
+                                    <!-- Task title -->
+                                    <h5 class="card-title">Click to add a new task</h5>
+                                    <!-- description -->
+                                    <p class="card-text text-truncate">{{ task.description }}</p>
+
+                                </div>
+                                <!-- task action -->
+                            </a>
+                        </div>
+
+                    </div>
+
+                    {% for task in tasks %}
+                        {% if task.is_done == False %}
+                        <div class="col mb-3">
+                            <div class="card mb-3">
+                            <a class="btn btn-primary" style="card mb-1 width: 250px; height: 200px" data-bs-toggle="modal" data-bs-target="#Task-{{task.id}}" href="#">
+                                <!-- Date -->
+                                <div>{{ task.date }}</div>
+                                <hr>
+                                {% if task.image %}
+                                    <img class="card-img-top" src="{{ task.image.url }}" alt="" />
+                                {% endif %}
+                                <div class="card-body">
+                                    <!-- Task title -->
+                                    <h5 class="card-title">{{ task.title }}</h5>
+                                    <!-- description -->
+                                    <p class="card-text text-truncate">{{ task.description }}</p>
+
+                                </div>
+                                <!-- task action -->
+                            </a>
+                            </div>
+
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="Task-{{task.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5 text-truncate" id="exampleModalLabel">{{ task.title }}</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                  {% if task.image %}
+                                    <img class="card-img-top" src="{{ task.image.url }}" alt="" />
+                                  {% endif %}
+                                <p class="card-text text-break">{{ task.description }}</p>
+                              </div>
+                              <div class="modal-footer">
+                                <a class="btn btn-secondary" data-bs-dismiss="modal">Close</a>
+                                <a class="btn btn-primary" href="{% url 'view_task' task.id %}">Start working</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+            </div>
+        </section>
+{% endblock %}
